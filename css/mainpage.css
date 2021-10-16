@@ -1,0 +1,85 @@
+body{
+  background-color: #d6bb71e3;
+}
+.btn:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+#btnToggle {
+  background-color: #3D550C;
+}
+
+#btnToggle:hover {
+  color: #59981A;
+}
+
+.sideBar {
+  background-color: #3D550C;
+}
+
+#btnToggle,
+i {
+  color: #ECF87F;
+}
+
+.sideBar span {
+  color: #81B622;
+}
+
+.sideBar span:hover {
+  color: #59981A;
+}
+
+.loaderImg {
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  top: calc(50% - 50px);
+  left: calc(60% - 50px);
+  z-index: 1;
+  display: none;
+}
+
+
+
+/* loader */
+
+.shapes-3 {
+  width: 50px;
+  height: 50px;
+  display: none;
+  transform:rotate(45deg);
+  animation: sh3-0 1.5s infinite linear;
+}
+.shapes-3:before,
+.shapes-3:after {
+  content: "";
+  width:50%;
+  background:#00E2A2;
+  clip-path: polygon(0 50%,100% 0,100% 100%);
+  animation: inherit;
+  animation-name: sh3-1;
+}
+.shapes-3:after {
+  clip-path: polygon(0 0,100% 50%,0% 100%);
+  animation-name: sh3-2;
+}
+@keyframes sh3-0 {
+  25% {width:50px;height:50px;transform:rotate(0)}
+  50% {width:50px;height:50px}
+  75% {width:70.70px;height:35.35px}
+  100%{width:70.70px;height:35.35px;transform:rotate(0)}
+}
+@keyframes sh3-1 {
+  0%,25% {clip-path: polygon(0 50% ,100% 0,100% 100%);transform:translate(0.3px)}
+  50%    {clip-path: polygon(0 50% ,100% 0,100% 100%);transform:translate(-5px)}
+  75%    {clip-path: polygon(0 100%,0    0,100% 100%);transform:translate(-5px)}
+  100%   {clip-path: polygon(0 100%,0    0,100% 100%);transform:translate(17.7px)}
+}
+@keyframes sh3-2 {
+  0%,25% {clip-path: polygon(0 0,100% 50%,0    100%);transform:translate(-0.3px) }
+  50%    {clip-path: polygon(0 0,100% 50%,0    100%);transform:translate(5px) }
+  75%    {clip-path: polygon(0 0,100% 0  ,100% 100%);transform:translate(5px)}
+  100%   {clip-path: polygon(0 0,100% 0  ,100% 100%);transform:translate(-17.7px) }
+}
