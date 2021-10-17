@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $ProductPrice = trim($_POST['productPrice']);
         $ProductUnit = trim($_POST['productUnit']);
 
-        if(empty($ProductDescription) || empty($ProductCategory) || empty($ProductStatus) || empty($ProductPrice)  || empty($ProductUnit) ){
+        if(empty($ProductDescription) || empty($ProductCategory) || empty($ProductStatus) || empty($ProductPrice) || empty($ProductUnit)){
             echo json_encode([
                 'status' => false
             ]);
@@ -85,7 +85,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             ]);
         }
         else{
-
             insertProduct($Conn,$ProductDescription,$ProductCategory,$ProductStatus,$ProductPrice,$ProductUnit);
             echo json_encode([
                 'status' => true

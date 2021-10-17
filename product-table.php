@@ -78,7 +78,7 @@ require_once 'includes/functions.inc.php';
                         <div class="mb-2">
                             <label for="productCategory" class="form-label">Category</label>
                             <select class="form-select" aria-label="productCategoryFeedback" id="productCategory" required>
-                                <option selected disabled value="">---Select Menu---</option>
+                                <option selected  value="">---Select Menu---</option>
                                 <option value="Dining_Area">Dining Area</option>
                                 <option value="Living_Area">Living Area</option>
                                 <option value="Kitchen_Area">Kitchen Area</option>
@@ -89,7 +89,7 @@ require_once 'includes/functions.inc.php';
                         <div class="mb-2">
                             <label for="productStatus" class="form-label">Status</label>
                             <select class="form-select" aria-label="productStatusFeedback" id='productStatus' required>
-                                <option selected disabled value="">---Select Menu---</option>
+                                <option selected value="">---Select Menu---</option>
                                 <option value="Available">Available</option>
                                 <option value="Unavailable">Unavailable</option>
                                 <option value="Processing">Processing</option>
@@ -104,7 +104,7 @@ require_once 'includes/functions.inc.php';
                         <div class="mb-2">
                             <label for="productUnit" class="form-label">Unit</label>
                             <select class="form-select" aria-label="productUnit" id='productUnit' required>
-                                <option selected disabled>---Select Menu---</option>
+                                <option selected value="">---Select Menu---</option>
 
                                 <?php
                                 unitOutput($Conn);
@@ -205,16 +205,31 @@ require_once 'includes/functions.inc.php';
 
 
         $(document).on('change', '#productCategory', function() {
-            getRemoveClass(this);
-            setClass(this);
+            if (!$('#productCategory').val() || $('#productCategory').val() === "" ) {
+                $('#productCategory').removeClass('is-valid');
+                $('#productCategory').addClass('is-invalid');
+            } else {
+                $('#productCategory').removeClass('is-invalid');
+                $('#productCategory').addClass('is-valid');
+            }
         });
         $(document).on('change', '#productStatus', function() {
-            getRemoveClass(this);
-            setClass(this);
+            if (!$('#productStatus').val() || $('#productStatus').val() === "" ) {
+                $('#productStatus').removeClass('is-valid');
+                $('#productStatus').addClass('is-invalid');
+            } else {
+                $('#productStatus').removeClass('is-invalid');
+                $('#productStatus').addClass('is-valid');
+            }
         });
         $(document).on('change', '#productUnit', function() {
-            getRemoveClass(this);
-            setClass(this);
+            if (!$('#productUnit').val() || $('#productUnit').val() === "" ) {
+                $('#productUnit').removeClass('is-valid');
+                $('#productUnit').addClass('is-invalid');
+            } else {
+                $('#productUnit').removeClass('is-invalid');
+                $('#productUnit').addClass('is-valid');
+            }
         });
         $(document).on('keyup', '#productPrice', function() {
             if (parseFloat($('#productPrice').val()) === 0 || !$('#productPrice').val()) {
@@ -247,15 +262,18 @@ require_once 'includes/functions.inc.php';
                 if (!$(allId[x]).val()) {
                     $(allId[x]).addClass('is-invalid');
                     checker = false;
-
-                } else {
-                    checker = true;
                 }
+                
 
+            }
+            if(parseFloat($('#productPrice').val()) <= 0){
+                checker = false;
+            }
+            else{
+                checker = true;
             }
 
             if (checker) {
-
                 $(this).html("<span class='spinner-border spinner-border-sm ' id = 'loading' role='status' aria-hidden='true'></span>");
                 $('#btnSaveProduct').attr("disabled", true);
 
@@ -283,6 +301,7 @@ require_once 'includes/functions.inc.php';
                             $('#btnSaveProduct').removeAttr('disabled');
                             $('#btnSaveProduct').text('Save Product');
                             $('#productTotalError').css('display', 'block');
+                            
                         }
 
 
@@ -309,10 +328,14 @@ require_once 'includes/functions.inc.php';
                     $(allId[x]).addClass('is-invalid');
                     checker = false;
 
-                } else {
-                    checker = true;
-                }
+                } 
 
+            }
+            if(parseFloat($('#productPrice').val()) <= 0){
+                checker = false;
+            }
+            else{
+                checker = true;
             }
 
             if (checker) {

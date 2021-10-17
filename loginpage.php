@@ -93,7 +93,7 @@
 
                         $('.errorBox').css('display','none');
                         $('.errorBox p').text("");
-                        alert('Login Success');
+                        location.href = 'mainpage.php';
                         
                     }
                     else{

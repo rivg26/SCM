@@ -1,3 +1,15 @@
+<?php
+session_start();
+if (!isset($_SESSION['username'])) {
+    header('location: loginpage.php');
+} else {
+    require_once 'includes/functions.inc.php';
+    require_once 'includes/dbh.inc.php';
+    $EncoderId = $_SESSION['acc_emp_id'];
+    $EncoderName = $_SESSION['first_name'];
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -64,39 +76,42 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-2">
-                        <label for="exampleFormControlInput1" class="form-label">Invoice Number</label>
-                        <button class="btnDesign p-1">Generate</button>
-                        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Invoice Number" readonly>
+                        <label for="inboundInvoice" class="form-label">Invoice Number</label>
+                        <input type="text" class="form-control" id="inboundInvoice" placeholder="Invoice Number" readonly>
                     </div>
                     <div class="mb-2">
                         <label for="inboundItemName" class="form-label">Item Name</label>
-                        <select class="form-select" aria-label="Default select example" id = 'inboundItemName'>
-                            <option selected>---Select Menu---</option>
-                            <option value="2x2_Wood">2x2 Wood</option>
-                            <option value="1x1_Metal">1x1 Metal</option>
-                            <option value="3">Screw</option>
-                            <option value="3">Philipps</option>
+                        <select class="form-select" aria-label="Default select example" id='inboundItemName' required>
+                            <option selected value="">---Select Menu---</option>
+                            <?php
+                            ItemNameOutput($Conn);
+                            ?>
                         </select>
+                        <div class="invalid-feedback" id="inboundItemNameFeedback">Please Select Item Name...</div>
                     </div>
                     <div class="mb-2">
-                        <label for="productQuantity" class="form-label" >Quantity</label>
-                        <input type="text" class="form-control" id="productQuantity" placeholder="Input Quantity" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');">
+                        <label for="inboundQuantity" class="form-label">Quantity</label>
+                        <input type="text" class="form-control" id="inboundQuantity" placeholder="Input Quantity" required oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');">
+                        <div class="invalid-feedback" id="inboundQuantityFeedback">Please Input Quantity...</div>
                     </div>
                     <div class="mb-2">
-                        <label for="exampleFormControlInput1" class="form-label" >Item Cost</label>
-                        <input type="text" class="form-control" id="itemCost" placeholder="Input Item Cost" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');">
+                        <label for="inboundItemCost" class="form-label">Item Cost</label>
+                        <input type="text" class="form-control" id="inboundItemCost" placeholder="Input Item Cost" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');">
+                        <div class="invalid-feedback" id="inboundItemCostFeedback">Please Input Item Cost...</div>
                     </div>
                     <div class="mb-2">
-                        <label for="exampleFormControlInput1" class="form-label">Inbound Date</label>
-                        <input type="date" class="form-control" id="exampleFormControlInput1" >
+                        <label for="inboundDate" class="form-label">Inbound Date</label>
+                        <input type="date" class="form-control" id="inboundDate">
+                        <div class="invalid-feedback" id="inboundDateFeedback">Please Select Date..</div>
                     </div>
                     <div class="mb-2">
-                        <label for="exampleFormControlInput1" class="form-label">Encoder Name</label>
-                        <input type="text" class="form-control" id="encoderName" readonly>
+                        <label for="inboundEncoder" class="form-label">Encoder Name</label>
+                        <input type="text" class="form-control" id="inboundEncoder" value="<?= $EncoderName ?>" readonly>
+                        <input type="hidden" id="inboundEncoderId" value="<?= $EncoderId ?>">
                     </div>
                     <div class="mb-2">
-                        <label for="exampleFormControlInput1" class="form-label">Remarks</label>
-                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                        <label for="inboundRemarks" class="form-label">Remarks</label>
+                        <textarea class="form-control" id="inboundRemarks" rows="3"></textarea>
                     </div>
 
                 </div>
@@ -117,18 +132,98 @@
             "bAutoWidth": true
         });
         $(document).on('click', '#btnAddInbound', function() {
-            $('#modalInbound').show();
-            $('#encoderName').val($('#encoderId').text());
-            
+
+            let datastring = 'btnAddInbound=' + 'true';
+            $.ajax({
+
+                type: 'POST',
+                url: 'includes/inbound-table.inc.php',
+                data: datastring,
+                dataType: 'json',
+                success: function(data, textStatus) {
+                    if (data.status) {
+                        $('#modalInbound').show();
+                        $('#inboundInvoice').val(data.genKey);
+                    }
+
+                },
+                fail: function(xhr, textStatus, errorThrown, data) {
+                    alert(errorThrown);
+                    alert(xhr);
+                    alert(textStatus);
+                }
+
+            });
+
         });
         $(document).on('click', '#btnModalInboundClose', function() {
-            $('#modalInbound').hide();
+            window.location.href = 'mainpage.php?component=Inbound';
         });
 
-        $(document).on('click', '#btnSaveInbound', function() {
-            alert($('#inboundItemName').val());
+        $(document).on('change', '#inboundItemName', function() {
+            if (!$('#inboundItemName').val() || $('#inboundItemName').val() === "") {
+                $('#inboundItemName').removeClass('is-valid');
+                $('#inboundItemName').addClass('is-invalid');
+            } else {
+                $('#inboundItemName').removeClass('is-invalid');
+                $('#inboundItemName').addClass('is-valid');
+            }
+
         });
-        
+
+        $(document).on('keyup', '#inboundQuantity', function() {
+            if (!$('#inboundQuantity').val() || parseFloat($('#inboundQuantity').val()) <= 0) {
+                $('#inboundQuantity').removeClass('is-valid');
+                $('#inboundQuantity').addClass('is-invalid');
+            } else {
+                $('#inboundQuantity').removeClass('is-invalid');
+                $('#inboundQuantity').addClass('is-valid');
+            }
+        });
+        $(document).on('keyup', '#inboundItemCost', function() {
+            if (!$('#inboundItemCost').val() || parseFloat($('#inboundItemCost').val()) <= 0) {
+                $('#inboundItemCost').removeClass('is-valid');
+                $('#inboundItemCost').addClass('is-invalid');
+            } else {
+                $('#inboundItemCost').removeClass('is-invalid');
+                $('#inboundItemCost').addClass('is-valid');
+            }
+        });
+        $(document).on('change', '#inboundDate', function() {
+            if (!$('#inboundDate').val() || $('#inboundDate').val() === "") {
+                $('#inboundItemCost').removeClass('is-valid');
+                $('#inboundDate').addClass('is-invalid');
+            } else {
+                $('#inboundDate').removeClass('is-invalid');
+                $('#inboundDate').addClass('is-valid');
+            }
+        });
+        $(document).on('click', '#btnSaveInbound', function() {
+
+            let allId = ['#inboundItemName', '#inboundQuantity', '#inboundItemCost', '#inboundDate'];
+            var checker;
+            for (let x = 0; x < 4; x++) {
+
+                if (!$(allId[x]).val()) {
+                    $(allId[x]).addClass('is-invalid');
+                    checker = false;
+                }
+
+            }
+            if (parseFloat($('#inboundQuantity').val()) <= 0) {
+                checker = false;
+            } 
+            else if(parseFloat($('#inboundItemCost').val()) <= 0){
+                checker = false;
+            }
+            else {
+                checker = true;
+            }
+            if (checker) {
+                
+            } 
+        });
+
     });
 </script>
 

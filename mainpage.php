@@ -1,3 +1,13 @@
+<?php
+    session_start();
+    if(!isset($_SESSION['username'])){
+        header('location: loginpage.php');
+    }
+    else{
+        
+    }
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -90,6 +100,12 @@
             switch (urlParams.get('component')){
                 case 'Product': 
                     var getComponent = 'product-table.php';
+                    break;
+                case 'Item': 
+                    var getComponent = 'item-table.php';
+                    break;
+                case 'Inbound': 
+                    var getComponent = 'inbound-table.php';
                     break;
                 default:
                     var getComponent = false;
