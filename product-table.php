@@ -139,7 +139,8 @@ require_once 'includes/functions.inc.php';
             "bLengthChange": true,
             "bFilter": true,
             "bInfo": false,
-            "bAutoWidth": true
+            "bAutoWidth": true,
+            lengthMenu: [5, 10, 20, 500, 100, 150]
         });
 
         $('#btnAddProduct').click(function() {
@@ -293,6 +294,9 @@ require_once 'includes/functions.inc.php';
                             $('#btnSaveProduct').text('Saved');
                             $('#btnSaveProduct').attr("disabled", true);
                             $('#productTotalError').css('display', 'none');
+                            $('input').attr('disabled', true);
+                            $('select').attr('disabled', true);
+                            $('textarea').attr('disabled', true);
 
 
                         } else {
@@ -340,7 +344,7 @@ require_once 'includes/functions.inc.php';
 
             if (checker) {
 
-                // $(this).html("<span class='spinner-border spinner-border-sm ' id = 'loading' role='status' aria-hidden='true'></span>");
+                $(this).html("<span class='spinner-border spinner-border-sm ' id = 'loading' role='status' aria-hidden='true'></span>");
                 $('#btnUpdateProduct').attr("disabled", true);
                 let btnData = 'update';
                 let datastring = 'productDescription=' + $('#updateProductDescription').val() + '&productCategory=' + form.productCategory.val() + '&productStatus=' + form.productStatus.val() + '&productPrice=' + form.productPrice.val() + '&productUnit=' + form.productUnit.val() + '&btnProductUpdate=' + btnData + '&rowId=' + $('#productRowId').val() + '&comparisonData=' + $('#updateProductDescriptionComparison').val();
@@ -359,7 +363,9 @@ require_once 'includes/functions.inc.php';
                             $('#btnUpdateProduct').text('Updated');
                             $('#btnUpdateProduct').attr("disabled", true);
                             $('#productTotalError').css('display', 'none');
-
+                            $('input').attr('disabled', true);
+                            $('select').attr('disabled', true);
+                            $('textarea').attr('disabled', true);
                             // alert('success');
 
                         } else {

@@ -38,13 +38,14 @@ if (!isset($_SESSION['username'])) {
                         <th>Item Cost</th>
                         <th>Inbound Date</th>
                         <th>Encoder Name</th>
-                        <th>Remarks</th>
                         <th></th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
-
+                    <?php
+                    getInboundTable($Conn);
+                    ?>
                 </tbody>
                 <tfoot>
                     <tr>
@@ -55,7 +56,6 @@ if (!isset($_SESSION['username'])) {
                         <th>Item Cost</th>
                         <th>Inbound Date</th>
                         <th>Encoder Name</th>
-                        <th>Remarks</th>
                         <th></th>
                         <th></th>
                     </tr>
@@ -78,6 +78,7 @@ if (!isset($_SESSION['username'])) {
                     <div class="mb-2">
                         <label for="inboundInvoice" class="form-label">Invoice Number</label>
                         <input type="text" class="form-control" id="inboundInvoice" placeholder="Invoice Number" readonly>
+                        <input type="hidden" id="inboundRowId">
                     </div>
                     <div class="mb-2">
                         <label for="inboundItemName" class="form-label">Item Name</label>
@@ -113,7 +114,11 @@ if (!isset($_SESSION['username'])) {
                         <label for="inboundRemarks" class="form-label">Remarks</label>
                         <textarea class="form-control" id="inboundRemarks" rows="3"></textarea>
                     </div>
+                    <div class="redBox mt-5" id='inboundTotalError'>
 
+                        <p>There is an error that needs to be fix..</p>
+
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btnDesign" style="padding: 0.5rem; " id="btnSaveInbound">Save Inbound</button>
@@ -129,7 +134,8 @@ if (!isset($_SESSION['username'])) {
             "bLengthChange": true,
             "bFilter": true,
             "bInfo": false,
-            "bAutoWidth": true
+            "bAutoWidth": true,
+            lengthMenu: [5, 10, 20, 500, 100, 150]
         });
         $(document).on('click', '#btnAddInbound', function() {
 
@@ -191,7 +197,7 @@ if (!isset($_SESSION['username'])) {
         });
         $(document).on('change', '#inboundDate', function() {
             if (!$('#inboundDate').val() || $('#inboundDate').val() === "") {
-                $('#inboundItemCost').removeClass('is-valid');
+                $('#inboundDate').removeClass('is-valid');
                 $('#inboundDate').addClass('is-invalid');
             } else {
                 $('#inboundDate').removeClass('is-invalid');
@@ -212,16 +218,156 @@ if (!isset($_SESSION['username'])) {
             }
             if (parseFloat($('#inboundQuantity').val()) <= 0) {
                 checker = false;
-            } 
-            else if(parseFloat($('#inboundItemCost').val()) <= 0){
+            } else if (parseFloat($('#inboundItemCost').val()) <= 0) {
                 checker = false;
-            }
-            else {
+            } else {
                 checker = true;
             }
             if (checker) {
-                
-            } 
+
+                $(this).html("<span class='spinner-border spinner-border-sm ' id = 'loading' role='status' aria-hidden='true'></span>");
+                $('#btnSaveInbound').attr("disabled", true);
+                let datastring = 'inboundInvoice=' + $('#inboundInvoice').val() + '&inboundItemName=' + $('#inboundItemName').val() + '&inboundQuantity=' + $('#inboundQuantity').val() + '&inboundItemCost=' + $('#inboundItemCost').val() + '&inboundDate=' + $('#inboundDate').val() + '&inboundEncoderId=' + $('#inboundEncoderId').val() + '&inboundRemarks=' + $('#inboundRemarks').val() + '&btnSaveInbound=' + 'true';
+                console.log(datastring)
+
+                $.ajax({
+
+                    type: 'POST',
+                    url: 'includes/inbound-table.inc.php',
+                    data: datastring,
+                    dataType: 'json',
+                    success: function(data, textStatus) {
+
+                        if (data.status === true) {
+
+                            $('#btnSaveInbound').text('Saved');
+                            $('#btnSaveInbound').attr("disabled", true);
+                            $('#inboundTotalError').css('display', 'none');
+                            $('input').attr('disabled', true);
+                            $('select').attr('disabled', true);
+                            $('textarea').attr('disabled', true);
+                            // alert('success');
+
+                        } else {
+                            // alert(data.status);
+                            $('#loading').remove();
+                            $('#btnSaveInbound').removeAttr('disabled');
+                            $('#btnSaveInbound').text('Save Inbound');
+                            $('#inboundTotalError').css('display', 'block');
+                        }
+
+
+                    },
+                    fail: function(xhr, textStatus, errorThrown, data) {
+                        alert(errorThrown);
+                        alert(xhr);
+                        alert(textStatus);
+                    }
+
+                });
+            }
+        });
+
+        $(document).on('click', '#btnEditInbound', function() {
+            let rowId = $(this).attr('row.id');
+            $('#inboundRowId').val(rowId);
+            $('#btnSaveInbound').attr('id', 'btnUpdateInbound');
+            $('#btnUpdateInbound').text('Update Inbound');
+            $('#modalInbound').show();
+
+            let datastring = 'inboundRowId=' + rowId + '&btnEditInbound=' + 'true';
+            $.ajax({
+
+                type: 'POST',
+                url: 'includes/inbound-table.inc.php',
+                data: datastring,
+                dataType: 'json',
+                success: function(data, textStatus) {
+
+                    if (data.status === true) {
+                        $('#inboundInvoice').val(data.infoItem[1]);
+                        $('#inboundItemName').val(data.infoItem[2]);
+                        $('#inboundQuantity').val(data.infoItem[3]);
+                        $('#inboundItemCost').val(data.infoItem[4]);
+                        $('#inboundDate').val(data.infoItem[5]);
+                        $('#inboundEncoder').val(data.infoItem[9] + ' ' + data.infoItem[10] + ' ' + data.infoItem[11]);
+                        $('#inboundRemarks').val(data.infoItem[7]);
+                    }
+
+
+                },
+                fail: function(xhr, textStatus, errorThrown, data) {
+                    alert(errorThrown);
+                    alert(xhr);
+                    alert(textStatus);
+                }
+
+            });
+
+        });
+
+        $(document).on('click', '#btnUpdateInbound', function() {
+
+            let allId = ['#inboundItemName', '#inboundQuantity', '#inboundItemCost', '#inboundDate'];
+            var checker;
+            for (let x = 0; x < 4; x++) {
+
+                if (!$(allId[x]).val()) {
+                    $(allId[x]).addClass('is-invalid');
+                    checker = false;
+                }
+
+            }
+            if (parseFloat($('#inboundQuantity').val()) <= 0) {
+                checker = false;
+            } else if (parseFloat($('#inboundItemCost').val()) <= 0) {
+                checker = false;
+            } else {
+                checker = true;
+            }
+            if (checker) {
+                $(this).html("<span class='spinner-border spinner-border-sm ' id = 'loading' role='status' aria-hidden='true'></span>");
+                $('#btnUpdateInbound').attr("disabled", true);
+                let datastring = 'inboundRowId=' + $("#inboundRowId").val() + '&inboundItemName=' + $('#inboundItemName').val() + '&inboundQuantity=' + $('#inboundQuantity').val() + '&inboundItemCost=' + $('#inboundItemCost').val() + '&inboundDate=' + $('#inboundDate').val() + '&inboundRemarks=' + $('#inboundRemarks').val() + '&btnUpdateInbound=' + 'true';
+                console.log(datastring)
+                $.ajax({
+
+                    type: 'POST',
+                    url: 'includes/inbound-table.inc.php',
+                    data: datastring,
+                    dataType: 'json',
+                    success: function(data, textStatus) {
+
+                        if (data.status === true) {
+
+                            $('#btnUpdateInbound').text('Updated');
+                            $('#btnUpdateInbound').attr("disabled", true);
+                            $('#inboundTotalError').css('display', 'none');
+                            $('input').attr('disabled', true);
+                            $('select').attr('disabled', true);
+                            $('textarea').attr('disabled', true);
+                            // alert('success');
+
+                        } else {
+                            // alert(data.status);
+                            $('#loading').remove();
+                            $('#btnUpdateInbound').removeAttr('disabled');
+                            $('#btnUpdateInbound').text('Update Inbound');
+                            $('#inboundTotalError').css('display', 'block');
+                        }
+
+
+                    },
+                    fail: function(xhr, textStatus, errorThrown, data) {
+                        alert(errorThrown);
+                        alert(xhr);
+                        alert(textStatus);
+                    }
+
+                });
+            }
+
+
         });
 
     });

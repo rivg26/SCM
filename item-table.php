@@ -1,13 +1,11 @@
 <?php
-    session_start();
-    if(!isset($_SESSION['username'])){
-        header('location: loginpage.php');
-    }
-    else{
-        require_once 'includes/functions.inc.php';
-        require_once 'includes/dbh.inc.php';
-       
-    }
+session_start();
+if (!isset($_SESSION['username'])) {
+    header('location: loginpage.php');
+} else {
+    require_once 'includes/functions.inc.php';
+    require_once 'includes/dbh.inc.php';
+}
 
 ?>
 
@@ -75,14 +73,14 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="itemName" class="form-label" id="itemNameLabel">Item Name</label>
-                        <input type="text" class="form-control" id="itemName" placeholder="Input Item Name" required >
+                        <input type="text" class="form-control" id="itemName" placeholder="Input Item Name" required>
                         <input type="hidden" id="itemRowId">
                         <input type="hidden" id="updateItemNameComparison">
                         <div class="invalid-feedback" id="itemNameFeedback">Please Fill the fields...</div>
                     </div>
                     <div class="mb-2">
                         <label for="itemCategory" class="form-label">Category</label>
-                        <select class="form-select" aria-label="itemCategory" id="itemCategory" required >
+                        <select class="form-select" aria-label="itemCategory" id="itemCategory" required>
                             <option selected value="">---Select Menu---</option>
                             <?php
                             itemCategoryOutput($Conn);
@@ -97,7 +95,7 @@
                     </div>
                     <div class="mb-2">
                         <label for="itemUnit" class="form-label">Unit</label>
-                        <select class="form-select" aria-label="itemUnit" id="itemUnit" required >
+                        <select class="form-select" aria-label="itemUnit" id="itemUnit" required>
                             <option selected value="">---Select Menu---</option>
                             <?php
                             unitOutput($Conn);
@@ -114,7 +112,6 @@
                 <div class="modal-footer">
                     <button type="button" class="btnDesign" id='btnItemSave' style="padding: 0.5rem; ">Save Item</button>
                 </div>
-
             </div>
         </div>
     </div>
@@ -126,7 +123,8 @@
             "bLengthChange": true,
             "bFilter": true,
             "bInfo": false,
-            "bAutoWidth": true
+            "bAutoWidth": true,
+            lengthMenu: [5, 10, 20, 500, 100, 150]
         });
         $(document).on('click', '#btnAddItem', function() {
             $('#modalItem').show();
@@ -134,7 +132,6 @@
         $(document).on('click', '#btnModalItemClose', function() {
             window.location.href = 'mainpage.php?component=Item';
         });
-
         const form = {
 
             itemName: $('#itemName'),
@@ -190,7 +187,7 @@
         });
 
         $(document).on('change', '#itemCategory', function() {
-            if (!$('#itemCategory').val() || $('#itemCategory').val() === "" ) {
+            if (!$('#itemCategory').val() || $('#itemCategory').val() === "") {
                 $('#itemCategory').removeClass('is-valid');
                 $('#itemCategory').addClass('is-invalid');
             } else {
@@ -221,13 +218,12 @@
                     $(allId[x]).addClass('is-invalid');
                     checker = false;
 
-                } 
+                }
 
             }
-            if(parseFloat($('#itemReorder').val()) <= 0){
+            if (parseFloat($('#itemReorder').val()) <= 0) {
                 checker = false;
-            }
-            else{
+            } else {
                 checker = true;
             }
 
@@ -372,22 +368,21 @@
                     $(allId[x]).addClass('is-invalid');
                     checker = false;
 
-                } 
+                }
 
             }
-            if(parseFloat($('#itemReorder').val()) <= 0){
+            if (parseFloat($('#itemReorder').val()) <= 0) {
                 checker = false;
-            }
-            else{
+            } else {
                 checker = true;
             }
             if (checker) {
                 $(this).html("<span class='spinner-border spinner-border-sm ' id = 'loading' role='status' aria-hidden='true'></span>");
                 $('#btnItemUpdate').attr("disabled", true);
-                
+
                 let datastring = 'itemName=' + $('#updateItemName').val() + '&itemCategory=' + $('#itemCategory').val() + '&itemReorder=' + $('#itemReorder').val() + '&itemUnit=' + $('#itemUnit').val() + '&btnItemUpdate=' + 'true' + '&comparisonData=' + $('#updateItemNameComparison').val() + '&rowId=' + $('#itemRowId').val();
                 console.log(datastring);
-             
+
                 $.ajax({
 
                     type: 'POST',

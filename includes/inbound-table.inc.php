@@ -11,6 +11,60 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
             'genKey' => $data
         ]);
     }
+
+    if(isset($_POST['btnSaveInbound'])){
+        $InboundInvoice = trim($_POST['inboundInvoice']);
+        $InboundItemName = trim($_POST['inboundItemName']);
+        $InboundQuantity = trim($_POST['inboundQuantity']);
+        $InboundItemCost = trim($_POST['inboundItemCost']);
+        $InboundDate = trim($_POST['inboundDate']);
+        $InboundEncoderId = trim($_POST['inboundEncoderId']);
+        $InboundRemarks = trim($_POST['inboundRemarks']);
+
+        if(empty($InboundInvoice) ||empty($InboundItemName)  || empty($InboundQuantity) || empty($InboundItemCost) || empty($InboundDate) || empty($InboundEncoderId) ){
+            echo json_encode([
+                'status' => false
+            ]);
+        }
+        else{
+            insertInbound($Conn, $InboundInvoice, $InboundItemName, $InboundQuantity,  $InboundItemCost, $InboundDate, $InboundEncoderId,$InboundRemarks);
+            echo json_encode([
+                'status' => true
+            ]);
+        }
+    }
+
+    if(isset($_POST['btnUpdateInbound'])){
+        $rowId = $_POST['inboundRowId'];
+        $InboundItemName = trim($_POST['inboundItemName']);
+        $InboundQuantity = trim($_POST['inboundQuantity']);
+        $InboundItemCost = trim($_POST['inboundItemCost']);
+        $InboundDate = trim($_POST['inboundDate']);
+        $InboundRemarks = trim($_POST['inboundRemarks']);
+
+        if(empty($InboundItemName)  || empty($InboundQuantity) || empty($InboundItemCost) || empty($InboundDate) || empty($rowId) ){
+            echo json_encode([
+                'status' => false
+            ]);
+        }
+        else{
+            updateInbound($Conn, $InboundItemName, $InboundQuantity,  $InboundItemCost, $InboundDate, $InboundRemarks, $rowId);
+            echo json_encode([
+                'status' => true
+            ]);
+        }
+    }
+
+
+
+    if(isset($_POST['btnEditInbound'])){
+        $Id = $_POST['inboundRowId'];
+        $data = getInboundData($Conn,$Id);
+        echo json_encode([
+            'status' => true,
+            'infoItem' => $data
+        ]);
+    }
 }
 
 

@@ -45,7 +45,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
                     $acc = accountSession ($Conn,$Data['acc_emp_id']);
                     session_start();
                     $_SESSION['username'] = $Username;
-                    $_SESSION['first_name'] = $acc['first_name'];
+                    $_SESSION['first_name'] = $acc['first_name']. ' ' .$acc['middle_name']. ' ' .$acc['last_name'];
                     $_SESSION['acc_emp_id'] = $acc['acc_emp_id'];
                     echo json_encode([
                         'status' => true

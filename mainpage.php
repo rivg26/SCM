@@ -107,6 +107,9 @@
                 case 'Inbound': 
                     var getComponent = 'inbound-table.php';
                     break;
+                case 'Outbound': 
+                    var getComponent = 'outbound-table.php';
+                    break;
                 default:
                     var getComponent = false;
             }

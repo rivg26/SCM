@@ -251,3 +251,151 @@ function ItemNameOutput($Conn)
         echo '<option value="' . $Row['item_id'] . '">' . $Row['item_name'] . '</option>';
     }
 }
+
+function insertInbound($Conn, $InboundInvoice, $InboundItemName, $InboundQuantity,  $InboundItemCost, $InboundDate, $InboundEncoderId,$InboundRemarks)
+{
+
+    $Sql = "INSERT INTO inbound_table (invoice_number, inbound_item_id, inbound_quantity ,inbound_item_cost, inbound_date, inbound_encoder_id, inbound_remarks) VALUES (?,?,?,?,?,?,?)";
+    $Stmt = mysqli_stmt_init($Conn);
+    if (!mysqli_stmt_prepare($Stmt, $Sql)) {
+        header("location: ../mainpage.php?error=true");
+        exit();
+    }
+    mysqli_stmt_bind_param($Stmt, "siddsis", $InboundInvoice, $InboundItemName, $InboundQuantity,  $InboundItemCost, $InboundDate, $InboundEncoderId,$InboundRemarks);
+    mysqli_stmt_execute($Stmt);
+    mysqli_stmt_close($Stmt);
+    mysqli_close($Conn);
+}
+
+function getInboundTable($Conn)
+{
+    
+    $Sql = "SELECT `inbound_id`,`invoice_number`,`inbound_item_id`,`inbound_quantity`,`inbound_item_cost`,`inbound_date`,`inbound_encoder_id`,`inbound_remarks`, item_table.item_name, employee_table.first_name, employee_table.middle_name, employee_table.last_name FROM `inbound_table` JOIN item_table ON inbound_item_id = item_table.item_id JOIN employee_table ON inbound_encoder_id = employee_table.emp_id;";
+    $num = 1;
+    $ResultData = mysqli_query($Conn, $Sql);
+    while ($Row = mysqli_fetch_array($ResultData, MYSQLI_BOTH)) {
+        echo '<tr >
+        <td>' . $num++ . '</td>
+        <td>' . $Row['invoice_number'] . '</td>
+        <td>' . $Row['item_name']. '</td>
+        <td>' . $Row['inbound_quantity'] . '</td>
+        <td>' . $Row['inbound_item_cost'] .'</td>
+        <td>' . $Row['inbound_date'] .'</td>
+        <td>' . $Row['first_name'] . ' '.$Row['middle_name'] . ' '.$Row['last_name'] .'</td>
+        <td><button  class = "btn btnDesign" id= "btnEditInbound" row.id = '.$Row['inbound_id'].' >Edit</button></td>
+        <td><button  class = "btn btnDesign" row.id = '.$Row['inbound_id'].' >Delete</button></td>
+        
+    </tr>';
+    }
+}
+
+function getInboundData($Conn,$Id)
+{
+   
+    $Sql = "SELECT `inbound_id`,`invoice_number`,`inbound_item_id`,`inbound_quantity`,`inbound_item_cost`,`inbound_date`,`inbound_encoder_id`,`inbound_remarks`, item_table.item_name, employee_table.first_name, employee_table.middle_name, employee_table.last_name FROM `inbound_table` JOIN item_table ON inbound_item_id = item_table.item_id JOIN employee_table ON inbound_encoder_id = employee_table.emp_id WHERE inbound_id = '$Id';";
+    $ResultData = mysqli_query($Conn, $Sql);
+    if ($Row = mysqli_fetch_array($ResultData, MYSQLI_BOTH)) {
+        return $Row;
+    }
+    else{
+        return false;
+    }
+}
+
+function updateInbound($Conn, $InboundItemName, $InboundQuantity,  $InboundItemCost, $InboundDate,$InboundRemarks, $rowId)
+{
+
+    $Sql = "UPDATE inbound_table SET inbound_item_id = ?, inbound_quantity = ? ,inbound_item_cost = ?, inbound_date = ?, inbound_remarks = ? WHERE inbound_id = ?";
+    $Stmt = mysqli_stmt_init($Conn);
+    if (!mysqli_stmt_prepare($Stmt, $Sql)) {
+        header("location: ../mainpage.php?error=true");
+        exit();
+    }
+    mysqli_stmt_bind_param($Stmt, "iddssi",$InboundItemName, $InboundQuantity,  $InboundItemCost, $InboundDate ,$InboundRemarks , $rowId);
+    mysqli_stmt_execute($Stmt);
+    mysqli_stmt_close($Stmt);
+    mysqli_close($Conn);
+}
+
+// OUTBOUND FUNCTIONS
+
+function ProductNameOutput($Conn)
+{
+    $Sql = " SELECT * FROM product_table";
+
+    $ResultData = mysqli_query($Conn, $Sql);
+    while ($Row = mysqli_fetch_array($ResultData, MYSQLI_BOTH)) {
+        echo '<option value="' . $Row['product_id'] . '">' . $Row['product_description'] . '</option>';
+    }
+}
+
+function insertOutbound($Conn, $OutboundItemName,  $OutboundProductName, $OutboundQuantity,  $OutboundDate, $OutboundEncoderId, $OutboundRemarks)
+{
+
+    $Sql = "INSERT INTO outbound_table (outbound_item_id, outbound_product_id, outbound_quantity, outbound_date, outbound_encoder_id, outbound_remarks) VALUES (?,?,?,?,?,?)";
+    $Stmt = mysqli_stmt_init($Conn);
+    if (!mysqli_stmt_prepare($Stmt, $Sql)) {
+        header("location: ../mainpage.php?error=true");
+        exit();
+    }
+    mysqli_stmt_bind_param($Stmt, "iidsis",$OutboundItemName,  $OutboundProductName, $OutboundQuantity,  $OutboundDate, $OutboundEncoderId, $OutboundRemarks);
+    mysqli_stmt_execute($Stmt);
+    mysqli_stmt_close($Stmt);
+    mysqli_close($Conn);
+}
+function getOutboundTable($Conn)
+{
+    
+    $Sql = "SELECT `outbound_id`,`outbound_item_id`,`outbound_product_id`,`outbound_quantity`,`outbound_date`,`outbound_encoder_id`,`outbound_remarks`, item_table.item_name, product_table.product_description, employee_table.first_name, employee_table.middle_name, employee_table.last_name FROM `outbound_table` JOIN item_table ON outbound_item_id = item_table.item_id JOIN product_table ON outbound_product_id = product_table.product_id JOIN employee_table ON outbound_encoder_id = employee_table.emp_id;";
+    $num = 1;
+    $ResultData = mysqli_query($Conn, $Sql);
+    while ($Row = mysqli_fetch_array($ResultData, MYSQLI_BOTH)) {
+        echo '<tr >
+        <td>' . $num++ . '</td>
+        <td>' . $Row['item_name'] . '</td>
+        <td>' . $Row['product_description']. '</td>
+        <td>' . $Row['outbound_quantity'] . '</td>
+        <td>' . $Row['outbound_date'] .'</td>
+        <td>' . $Row['first_name'] . ' '.$Row['middle_name'] . ' '.$Row['last_name'] .'</td>
+        <td><button  class = "btn btnDesign" id= "btnEditOutbound" row.id = '.$Row['outbound_id'].' >Edit</button></td>
+        <td><button  class = "btn btnDesign" row.id = '.$Row['outbound_id'].' >Delete</button></td>
+        
+    </tr>';
+    }
+}
+
+function getOutboundData($Conn,$Id)
+{
+   
+    $Sql = "SELECT item_name,SUM(inbound_table.inbound_quantity), SUM(outbound_table.outbound_quantity) FROM `item_table` JOIN inbound_table ON inbound_table.inbound_item_id = item_id JOIN outbound_table ON outbound_table.outbound_item_id = item_id GROUP By item_id;";
+    $ResultData = mysqli_query($Conn, $Sql);
+    if ($Row = mysqli_fetch_array($ResultData, MYSQLI_BOTH)) {
+        return $Row;
+    }
+    else{
+        return false;
+    }
+}
+
+function updateOutbound($Conn, $OutboundItemName,  $OutboundProductName, $OutboundQuantity,  $OutboundDate, $OutboundRemarks, $Id)
+{
+
+    $Sql = "UPDATE outbound_table SET outbound_item_id = ?, outbound_product_id = ?, outbound_quantity = ?, outbound_date = ?,  outbound_remarks = ? WHERE outbound_id = ?";
+    $Stmt = mysqli_stmt_init($Conn);
+    if (!mysqli_stmt_prepare($Stmt, $Sql)) {
+        header("location: ../mainpage.php?error=true");
+        exit();
+    }
+    mysqli_stmt_bind_param($Stmt, "iidssi",$OutboundItemName,  $OutboundProductName, $OutboundQuantity,  $OutboundDate, $OutboundRemarks, $Id);
+    mysqli_stmt_execute($Stmt);
+    mysqli_stmt_close($Stmt);
+    mysqli_close($Conn);
+}
+
+function getInventoryTable($Conn)
+{
+    $num = 2;
+    for($x = 0; $x < 21; $x++){
+
+    }
+}

@@ -18,13 +18,14 @@ require_once 'includes/functions.inc.php';
 //     mysqli_close($Conn);
 // }
 
-$x = 300.12;
-$y = 5;
+// $x = 300.12;
+// $y = 5;
 // insertProduct($Conn,"Yellow Bi",'Living',"Avail",$x, $y);
 
 // updateProduct($Conn, 'Blue Chaird', 'Dining_Area', 'Available' , 2400, 1, 1);
 // insertItem($Conn,  '2x3 Wood', 1, 4, 5);
-echo GenerateKey($Conn);
+// print_r(getInventoryTable($Conn));
+
 // // Check connection
 // if (!$Conn) {
 //   die("Connection failed: " . mysqli_connect_error());
