@@ -65,7 +65,7 @@ require_once 'includes/functions.inc.php';
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Add Product Information</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id='btnModalProductClose'></button>
+                        <button type="button" class="btn-close btnModalProductClose" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <div class="mb-2">
@@ -78,7 +78,7 @@ require_once 'includes/functions.inc.php';
                         <div class="mb-2">
                             <label for="productCategory" class="form-label">Category</label>
                             <select class="form-select" aria-label="productCategoryFeedback" id="productCategory" required>
-                                <option selected  value="">---Select Menu---</option>
+                                <option selected value="">---Select Menu---</option>
                                 <option value="Dining_Area">Dining Area</option>
                                 <option value="Living_Area">Living Area</option>
                                 <option value="Kitchen_Area">Kitchen Area</option>
@@ -129,6 +129,31 @@ require_once 'includes/functions.inc.php';
                 </div>
             </div>
         </div>
+
+        <div class="modal" tabindex="-1" id='modalProductDelete' style="background-color: rgba(0, 0, 0, 0.5);">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Delete Product Information</h5>
+                        <button type="button" class="btn-close btnModalProductClose" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p id = 'modalProductDeleteInfo'>Are you sure you want to delete this Product?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btnDesign" id="btnDeleteProductFinal" style="padding: 0.5rem; ">Delete Product</button>
+                        <button type="button" class="btnDesign btnModalProductClose" id="btnProductCancel" style="padding: 0.5rem; ">Cancel</button>
+                    </div>
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
     </form>
 </body>
 <script>
@@ -147,9 +172,9 @@ require_once 'includes/functions.inc.php';
             $('#modalProduct').show();
         });
 
-        $('#btnModalProductClose').click(function() {
+        $('.btnModalProductClose').click(function() {
             window.location.href = 'mainpage.php?component=Product';
-            
+
         });
 
         const form = {
@@ -206,7 +231,7 @@ require_once 'includes/functions.inc.php';
 
 
         $(document).on('change', '#productCategory', function() {
-            if (!$('#productCategory').val() || $('#productCategory').val() === "" ) {
+            if (!$('#productCategory').val() || $('#productCategory').val() === "") {
                 $('#productCategory').removeClass('is-valid');
                 $('#productCategory').addClass('is-invalid');
             } else {
@@ -215,7 +240,7 @@ require_once 'includes/functions.inc.php';
             }
         });
         $(document).on('change', '#productStatus', function() {
-            if (!$('#productStatus').val() || $('#productStatus').val() === "" ) {
+            if (!$('#productStatus').val() || $('#productStatus').val() === "") {
                 $('#productStatus').removeClass('is-valid');
                 $('#productStatus').addClass('is-invalid');
             } else {
@@ -224,7 +249,7 @@ require_once 'includes/functions.inc.php';
             }
         });
         $(document).on('change', '#productUnit', function() {
-            if (!$('#productUnit').val() || $('#productUnit').val() === "" ) {
+            if (!$('#productUnit').val() || $('#productUnit').val() === "") {
                 $('#productUnit').removeClass('is-valid');
                 $('#productUnit').addClass('is-invalid');
             } else {
@@ -264,13 +289,12 @@ require_once 'includes/functions.inc.php';
                     $(allId[x]).addClass('is-invalid');
                     checker = false;
                 }
-                
+
 
             }
-            if(parseFloat($('#productPrice').val()) <= 0){
+            if (parseFloat($('#productPrice').val()) <= 0) {
                 checker = false;
-            }
-            else{
+            } else {
                 checker = true;
             }
 
@@ -305,7 +329,7 @@ require_once 'includes/functions.inc.php';
                             $('#btnSaveProduct').removeAttr('disabled');
                             $('#btnSaveProduct').text('Save Product');
                             $('#productTotalError').css('display', 'block');
-                            
+
                         }
 
 
@@ -332,13 +356,12 @@ require_once 'includes/functions.inc.php';
                     $(allId[x]).addClass('is-invalid');
                     checker = false;
 
-                } 
+                }
 
             }
-            if(parseFloat($('#productPrice').val()) <= 0){
+            if (parseFloat($('#productPrice').val()) <= 0) {
                 checker = false;
-            }
-            else{
+            } else {
                 checker = true;
             }
 
@@ -474,6 +497,48 @@ require_once 'includes/functions.inc.php';
 
                 });
             }
+        });
+
+        $(document).on('click', '#btnDeleteProduct', function() {
+            $('#modalProductDelete').show();
+            let rowId = $(this).attr('row.id');
+            $('#productRowId').val(rowId);
+
+        });
+
+        $(document).on('click','#btnDeleteProductFinal',function(){
+
+            let datastring = 'rowId=' + $('#productRowId').val() + '&btnDeleteProductFinal=' + 'true';
+
+            $.ajax({
+
+                type: 'POST',
+                url: 'includes/product-table.inc.php',
+                data: datastring,
+                dataType: 'json',
+                success: function(data, textStatus) {
+
+                    if (data.status === true) {
+                        $('#modalProductDeleteInfo').text(data.message);
+                        $('#btnDeleteProductFinal').css('display','none');
+                        $('#btnProductCancel').css('display','none');
+                       
+
+                    } else{
+                        $('#modalProductDeleteInfo').text(data.message);
+                        $('#btnDeleteProductFinal').css('display','none');
+                        $('#btnProductCancel').css('display','none');
+                    }
+
+
+                },
+                fail: function(xhr, textStatus, errorThrown, data) {
+                    alert(errorThrown);
+                    alert(xhr);
+                    alert(textStatus);
+                }
+
+            });
         });
 
 

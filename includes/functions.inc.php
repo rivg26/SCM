@@ -22,6 +22,8 @@ function CheckingAccountExist($Conn, $Username)
     }
 }
 
+//Product Table
+
 function CheckingProductDescriptionExist($Conn, $ProductDescription)
 {
     $Sql = " SELECT * FROM product_table WHERE product_description = '$ProductDescription' ";
@@ -88,7 +90,7 @@ function productTable($Conn)
         <td>' . $Row['price'] . '</td>
         <td>' . $Row['unit_name'] .'---' .$Row['unit_abbr']. '</td>
         <td><button  class = "btn btnDesign" id= "btnEditProduct" row.id = '.$Row['product_id'].' >Edit</button></td>
-        <td><button  class = "btn btnDesign" row.id = '.$Row['product_id'].' >Delete</button></td>
+        <td><button  class = "btn btnDesign" id= "btnDeleteProduct" row.id = '.$Row['product_id'].' >Delete</button></td>
         
     </tr>';
     }
@@ -119,6 +121,28 @@ function saveItem($Conn, $ProductDescription, $CategorySelect, $AvailabilitySele
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
     mysqli_close($Conn);
+}
+
+
+function checkingProductIdInOutbound($Conn,$Id)
+{
+    $Sql = "SELECT product_id FROM product_table JOIN outbound_table ON outbound_table.outbound_product_id = product_id WHERE product_id = '$Id' GROUP BY product_id;;";
+    $ResultData = mysqli_query($Conn, $Sql);
+    if ($Row = mysqli_fetch_assoc($ResultData)) {
+        return $Row;
+    }
+    else{
+        return false;
+    }
+}
+
+function deleteProduct($Conn, $Id)
+{
+
+    $Sql = "DELETE FROM product_table WHERE product_id = '$Id' ";
+    mysqli_query($Conn, $Sql);
+    mysqli_close($Conn);
+    
 }
 
 //ITEM TABLE FUNCTIONS
@@ -415,4 +439,5 @@ function getInventoryTable($Conn,$FromDate,$EndDate)
     </tr>';
     }
 }
-  
+
+

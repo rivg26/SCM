@@ -123,4 +123,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             ]);
         }
     }
+
+
+    if(isset($_POST['btnDeleteProductFinal'])){
+        $Id = $_POST['rowId'];
+
+        if(checkingProductIdInOutbound($Conn,$Id)){
+            echo json_encode([
+                'status' => false,
+                'message' => 'This product have data in Outbound.. You Cannot Delete it'
+            ]);
+        }
+        else{
+            deleteProduct($Conn, $Id);
+            echo json_encode([
+                'status' => true,
+                'message' => 'Product Deleted....'
+            ]);
+        }
+        
+    }
 }

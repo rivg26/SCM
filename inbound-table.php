@@ -126,6 +126,30 @@ if (!isset($_SESSION['username'])) {
             </div>
         </div>
     </div>
+
+
+    <div class="modal" tabindex="-1" id='modalInboundDelete' style="background-color: rgba(0, 0, 0, 0.5);">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Product Information</h5>
+                    <button type="button" class="btn-close btnModalInboundClose" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id='modalProductDeleteInfo'>Are you sure you want to delete this Product?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btnDesign" id="btnDeleteProductFinal" style="padding: 0.5rem; ">Delete Product</button>
+                    <button type="button" class="btnDesign btnModalInboundClose" id="btnInboundCancel" style="padding: 0.5rem; ">Cancel</button>
+                </div>
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 </body>
 <script>
     $(document).ready(function() {
