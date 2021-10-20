@@ -3,9 +3,6 @@
     if(!isset($_SESSION['username'])){
         header('location: loginpage.php');
     }
-    else{
-        
-    }
 ?>
 
 <!DOCTYPE html>
@@ -78,6 +75,7 @@
                     </div>
                 </div>
             </div>
+        
             <div class="col py-3" id='backgroundWrapper'>
                 <button type="button" class="btn" id="btnToggle"><i class="fas fa-bars" id="toggleIcon"></i></button>
                 <br>
@@ -109,6 +107,9 @@
                     break;
                 case 'Outbound': 
                     var getComponent = 'outbound-table.php';
+                    break;
+                case 'Inventory': 
+                    var getComponent = 'inventory-table.php';
                     break;
                 default:
                     var getComponent = false;
@@ -154,7 +155,6 @@
                     case 'inventory':
                         var component = 'inventory-table.php';
                         break;
-
                     default:
                         var component = false;
                 }
