@@ -126,7 +126,7 @@ function saveItem($Conn, $ProductDescription, $CategorySelect, $AvailabilitySele
 
 function checkingProductIdInOutbound($Conn,$Id)
 {
-    $Sql = "SELECT product_id FROM product_table JOIN outbound_table ON outbound_table.outbound_product_id = product_id WHERE product_id = '$Id' GROUP BY product_id;;";
+    $Sql = "SELECT product_id FROM product_table JOIN outbound_table ON outbound_table.outbound_product_id = product_id WHERE product_id = '$Id' GROUP BY product_id;";
     $ResultData = mysqli_query($Conn, $Sql);
     if ($Row = mysqli_fetch_assoc($ResultData)) {
         return $Row;
@@ -200,7 +200,7 @@ function getItemTable($Conn)
         <td>' . $Row['reorder_quantity'] . '</td>
         <td>' . $Row['unit_name'] .'---' .$Row['unit_abbr']. '</td>
         <td><button  class = "btn btnDesign" id= "btnEditItem" row.id = '.$Row['item_id'].' >Edit</button></td>
-        <td><button  class = "btn btnDesign" row.id = '.$Row['item_id'].' >Delete</button></td>
+        <td><button  class = "btn btnDesign" id= "btnDeleteItem" row.id = '.$Row['item_id'].' >Delete</button></td>
         
     </tr>';
     }
@@ -230,6 +230,24 @@ function updateItem($Conn,  $ItemName, $ItemCategory, $ItemReorder, $ItemUnit,$r
     mysqli_stmt_bind_param($Stmt, "sidii",  $ItemName, $ItemCategory, $ItemReorder, $ItemUnit, $rowId);
     mysqli_stmt_execute($Stmt);
     mysqli_stmt_close($Stmt);
+    mysqli_close($Conn);
+}
+function checkingItemDelete($Conn,$Id)
+{
+    $Sql = "SELECT * FROM `item_table` JOIN inbound_table ON inbound_table.inbound_item_id = item_id JOIN outbound_table ON outbound_table.outbound_item_id = item_id WHERE item_id = ' $Id' GROUP BY item_id;";
+    $ResultData = mysqli_query($Conn, $Sql);
+    if ($Row = mysqli_fetch_assoc($ResultData)) {
+        return $Row;
+    }
+    else{
+        return false;
+    }
+}
+
+function deleteItembound($Conn, $Id)
+{
+    $Sql = "DELETE FROM item_table WHERE item_id = '$Id' ";
+    mysqli_query($Conn, $Sql);
     mysqli_close($Conn);
 }
 
@@ -307,7 +325,7 @@ function getInboundTable($Conn)
         <td>' . $Row['inbound_date'] .'</td>
         <td>' . $Row['first_name'] . ' '.$Row['middle_name'] . ' '.$Row['last_name'] .'</td>
         <td><button  class = "btn btnDesign" id= "btnEditInbound" row.id = '.$Row['inbound_id'].' >Edit</button></td>
-        <td><button  class = "btn btnDesign" row.id = '.$Row['inbound_id'].' >Delete</button></td>
+        <td><button  class = "btn btnDesign" id= "btnDeleteInbound" row.id = '.$Row['inbound_id'].' row.item = '.$Row['inbound_item_id'].' >Delete</button></td>
         
     </tr>';
     }
@@ -338,6 +356,25 @@ function updateInbound($Conn, $InboundItemName, $InboundQuantity,  $InboundItemC
     mysqli_stmt_bind_param($Stmt, "iddssi",$InboundItemName, $InboundQuantity,  $InboundItemCost, $InboundDate ,$InboundRemarks , $rowId);
     mysqli_stmt_execute($Stmt);
     mysqli_stmt_close($Stmt);
+    mysqli_close($Conn);
+}
+
+function checkingInboundDelete($Conn,$Id)
+{
+    $Sql = "SELECT `inbound_id` FROM inbound_table JOIN outbound_table ON outbound_table.outbound_item_id = inbound_item_id WHERE inbound_item_id = '$Id' GROUP BY inbound_item_id;";
+    $ResultData = mysqli_query($Conn, $Sql);
+    if ($Row = mysqli_fetch_assoc($ResultData)) {
+        return $Row;
+    }
+    else{
+        return false;
+    }
+}
+
+function deleteInbound($Conn, $Id)
+{
+    $Sql = "DELETE FROM inbound_table WHERE inbound_id = '$Id' ";
+    mysqli_query($Conn, $Sql);
     mysqli_close($Conn);
 }
 
@@ -382,7 +419,7 @@ function getOutboundTable($Conn)
         <td>' . $Row['outbound_date'] .'</td>
         <td>' . $Row['first_name'] . ' '.$Row['middle_name'] . ' '.$Row['last_name'] .'</td>
         <td><button  class = "btn btnDesign" id= "btnEditOutbound" row.id = '.$Row['outbound_id'].' >Edit</button></td>
-        <td><button  class = "btn btnDesign" row.id = '.$Row['outbound_id'].' >Delete</button></td>
+        <td><button  class = "btn btnDesign" id= "btnDeleteOutbound" row.id = '.$Row['outbound_id'].' >Delete</button></td>
         
     </tr>';
     }
@@ -416,6 +453,13 @@ function updateOutbound($Conn, $OutboundItemName,  $OutboundProductName, $Outbou
     mysqli_close($Conn);
 }
 
+function deleteOutbound($Conn, $Id)
+{
+    $Sql = "DELETE FROM outbound_table WHERE outbound_id = '$Id' ";
+    mysqli_query($Conn, $Sql);
+    mysqli_close($Conn);
+}
+
 function getInventoryTable($Conn,$FromDate,$EndDate)
 {
     
@@ -439,5 +483,4 @@ function getInventoryTable($Conn,$FromDate,$EndDate)
     </tr>';
     }
 }
-
 

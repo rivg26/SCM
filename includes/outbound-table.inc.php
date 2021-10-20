@@ -55,6 +55,15 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
             'infoItem' => $data
         ]);
     }
+
+    if(isset($_POST['btnDeleteOutboundFinal'])){
+        $Id = $_POST['rowId'];
+        deleteOutbound($Conn, $Id);
+        echo json_encode([
+            'status' => true,
+            'message' => "Delete Sucess"
+        ]);
+    }
     
 }
 

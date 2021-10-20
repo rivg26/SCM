@@ -70,7 +70,7 @@ if (!isset($_SESSION['username'])) {
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Add Outbound Item Information</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id='btnModalOutboundClose'></button>
+                    <button type="button" class="btn-close btnModalOutboundClose" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-2">
@@ -124,10 +124,73 @@ if (!isset($_SESSION['username'])) {
                 </div>
             </div>
         </div>
+    </div>
+
+    <div class="modal" tabindex="-1" id='modalOutboundDelete' style="background-color: rgba(0, 0, 0, 0.5);">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Outbound Information</h5>
+                    <button type="button" class="btn-close btnModalOutboundClose" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id='modalOutboundDeleteInfo'>Are you sure you want to delete this Outbound data?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btnDesign" id="btnDeleteOutboundFinal" style="padding: 0.5rem; ">Delete Outbound</button>
+                    <button type="button" class="btnDesign btnModalOutboundClose" id="btnOutboundCancel" style="padding: 0.5rem; ">Cancel</button>
+                </div>
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+            </div>
+        </div>
+    </div>
 
 </body>
 <script>
     $(document).ready(function() {
+
+        $(document).on('click', '#btnDeleteOutbound', function() {
+            let rowId = $(this).attr('row.id');
+            $('#outboundRowId').val(rowId);
+            $('#modalOutboundDelete').show();
+        });
+
+        $(document).on('click', '#btnDeleteOutboundFinal', function() {
+
+            let datastring = 'rowId=' + $('#outboundRowId').val() + '&btnDeleteOutboundFinal=' + 'true';
+
+            $.ajax({
+
+                type: 'POST',
+                url: 'includes/outbound-table.inc.php',
+                data: datastring,
+                dataType: 'json',
+                success: function(data, textStatus) {
+
+                    if (data.status === true) {
+                        $('#modalOutboundDeleteInfo').text(data.message);
+                        $('#btnDeleteOutboundFinal').css('display', 'none');
+                        $('#btnOutboundCancel').css('display', 'none');
+
+
+                    } else {
+                        $('#modalOutboundDeleteInfo').text(data.message);
+                        $('#btnDeleteOutboundFinal').css('display', 'none');
+                        $('#btnOutboundCancel').css('display', 'none');
+                    }
+
+
+                },
+                fail: function(xhr, textStatus, errorThrown, data) {
+                    alert(errorThrown);
+                    alert(xhr);
+                    alert(textStatus);
+                }
+
+            });
+        });
 
         $('#outboundTable').DataTable({
             "bPaginate": true,
@@ -141,7 +204,7 @@ if (!isset($_SESSION['username'])) {
         $(document).on('click', '#btnAddOutbound', function() {
             $('#modalOutbound').show();
         });
-        $(document).on('click', '#btnModalOutboundClose', function() {
+        $(document).on('click', '.btnModalOutboundClose', function() {
             window.location.href = 'mainpage.php?component=Outbound';
         });
 
@@ -256,7 +319,7 @@ if (!isset($_SESSION['username'])) {
             $('#modalOutbound').show();
 
             let datastring = 'outboundRowId=' + rowId + '&btnEditOutbound=' + 'true';
-            
+
             $.ajax({
 
                 type: 'POST',
@@ -266,7 +329,7 @@ if (!isset($_SESSION['username'])) {
                 success: function(data, textStatus) {
 
                     if (data.status === true) {
-                        
+
                         $('#outboundItemName').val(data.infoItem[1]);
                         $('#outboundProductName').val(data.infoItem[2]);
                         $('#outboundQuantity').val(data.infoItem[3]);
@@ -287,7 +350,7 @@ if (!isset($_SESSION['username'])) {
 
         });
 
-        $(document).on('click','#btnUpdateOutbound',function(){
+        $(document).on('click', '#btnUpdateOutbound', function() {
             let allId = ['#outboundItemName', '#outboundProductName', '#outboundQuantity', '#outboundDate'];
             var checker;
             for (let x = 0; x < 4; x++) {
@@ -306,7 +369,7 @@ if (!isset($_SESSION['username'])) {
             if (checker) {
                 $(this).html("<span class='spinner-border spinner-border-sm ' id = 'loading' role='status' aria-hidden='true'></span>");
                 $('#btnUpdateOutbound').attr("disabled", true);
-                let datastring = 'outboundItemName=' + $('#outboundItemName').val() + '&outboundProductName=' + $('#outboundProductName').val() + '&outboundQuantity=' + $('#outboundQuantity').val() + '&outboundDate=' + $('#outboundDate').val()  + '&outboundRemarks=' + $('#outboundRemarks').val() + '&outboundRowId=' + $('#outboundRowId').val()  +'&btnUpdateOutbound=' + 'true';
+                let datastring = 'outboundItemName=' + $('#outboundItemName').val() + '&outboundProductName=' + $('#outboundProductName').val() + '&outboundQuantity=' + $('#outboundQuantity').val() + '&outboundDate=' + $('#outboundDate').val() + '&outboundRemarks=' + $('#outboundRemarks').val() + '&outboundRowId=' + $('#outboundRowId').val() + '&btnUpdateOutbound=' + 'true';
                 console.log(datastring);
 
                 $.ajax({

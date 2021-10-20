@@ -65,6 +65,26 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
             'infoItem' => $data
         ]);
     }
+
+    if(isset($_POST['btnDeleteInboundFinal'])){
+
+        $ItemId = $_POST['rowItemId'];
+        $Id = $_POST['rowId'];
+
+        if(checkingInboundDelete($Conn,$ItemId)){
+            echo json_encode([
+                'status' => false,
+                'message' => "You cannot delete it.. Existing Outbound"
+            ]);
+        }
+        else{
+            deleteInbound($Conn, $Id);
+            echo json_encode([
+                'status' => true,
+                'message' => "Delete Success"
+            ]);
+        }
+    }
 }
 
 

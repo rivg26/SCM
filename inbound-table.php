@@ -72,13 +72,14 @@ if (!isset($_SESSION['username'])) {
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Add Inbound Item Information</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id='btnModalInboundClose'></button>
+                    <button type="button" class="btn-close btnModalInboundClose" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-2">
                         <label for="inboundInvoice" class="form-label">Invoice Number</label>
                         <input type="text" class="form-control" id="inboundInvoice" placeholder="Invoice Number" readonly>
                         <input type="hidden" id="inboundRowId">
+                        <input type="hidden" id="inboundRowItemId">
                     </div>
                     <div class="mb-2">
                         <label for="inboundItemName" class="form-label">Item Name</label>
@@ -132,14 +133,14 @@ if (!isset($_SESSION['username'])) {
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Delete Product Information</h5>
+                    <h5 class="modal-title">Delete Inbound Information</h5>
                     <button type="button" class="btn-close btnModalInboundClose" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p id='modalProductDeleteInfo'>Are you sure you want to delete this Product?</p>
+                    <p id='modalInboundDeleteInfo'>Are you sure you want to delete this Inbound data?</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btnDesign" id="btnDeleteProductFinal" style="padding: 0.5rem; ">Delete Product</button>
+                    <button type="button" class="btnDesign" id="btnDeleteInboundFinal" style="padding: 0.5rem; ">Delete Inbound</button>
                     <button type="button" class="btnDesign btnModalInboundClose" id="btnInboundCancel" style="padding: 0.5rem; ">Cancel</button>
                 </div>
                 <div class="valid-feedback">
@@ -186,7 +187,7 @@ if (!isset($_SESSION['username'])) {
             });
 
         });
-        $(document).on('click', '#btnModalInboundClose', function() {
+        $(document).on('click', '.btnModalInboundClose', function() {
             window.location.href = 'mainpage.php?component=Inbound';
         });
 
@@ -392,6 +393,49 @@ if (!isset($_SESSION['username'])) {
             }
 
 
+        });
+
+        $(document).on('click', '#btnDeleteInbound', function() {
+            $('#modalInboundDelete').show();
+            let rowId = $(this).attr('row.id');
+            $('#inboundRowId').val(rowId);
+            let rowItemId = $(this).attr('row.item');
+            $('#inboundRowItemId').val(rowItemId);
+        });
+
+        $(document).on('click', '#btnDeleteInboundFinal', function() {
+
+            let datastring = 'rowId=' + $('#inboundRowId').val() + '&rowItemId=' + $('#inboundRowItemId').val() + '&btnDeleteInboundFinal=' + 'true';
+
+            $.ajax({
+
+                type: 'POST',
+                url: 'includes/inbound-table.inc.php',
+                data: datastring,
+                dataType: 'json',
+                success: function(data, textStatus) {
+
+                    if (data.status === true) {
+                        $('#modalInboundDeleteInfo').text(data.message);
+                        $('#btnDeleteInboundFinal').css('display', 'none');
+                        $('#btnInboundCancel').css('display', 'none');
+
+
+                    } else {
+                        $('#modalInboundDeleteInfo').text(data.message);
+                        $('#btnDeleteInboundFinal').css('display', 'none');
+                        $('#btnInboundCancel').css('display', 'none');
+                    }
+
+
+                },
+                fail: function(xhr, textStatus, errorThrown, data) {
+                    alert(errorThrown);
+                    alert(xhr);
+                    alert(textStatus);
+                }
+
+            });
         });
 
     });

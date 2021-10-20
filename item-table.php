@@ -68,7 +68,7 @@ if (!isset($_SESSION['username'])) {
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Add Item Information</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id='btnModalItemClose'></button>
+                    <button type="button" class="btn-close btnModalItemClose" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
@@ -115,6 +115,28 @@ if (!isset($_SESSION['username'])) {
             </div>
         </div>
     </div>
+
+    <div class="modal" tabindex="-1" id='modalItemDelete' style="background-color: rgba(0, 0, 0, 0.5);">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Item Information</h5>
+                    <button type="button" class="btn-close btnModalItemClose" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id='modalItemDeleteInfo'>Are you sure you want to delete this Item?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btnDesign" id="btnDeleteItemFinal" style="padding: 0.5rem; ">Delete Item</button>
+                    <button type="button" class="btnDesign btnModalItemClose" id="btnItemCancel" style="padding: 0.5rem; ">Cancel</button>
+                </div>
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 <script>
     $(document).ready(function() {
@@ -129,7 +151,7 @@ if (!isset($_SESSION['username'])) {
         $(document).on('click', '#btnAddItem', function() {
             $('#modalItem').show();
         });
-        $(document).on('click', '#btnModalItemClose', function() {
+        $(document).on('click', '.btnModalItemClose', function() {
             window.location.href = 'mainpage.php?component=Item';
         });
         const form = {
@@ -420,6 +442,47 @@ if (!isset($_SESSION['username'])) {
             }
 
 
+        });
+
+        $(document).on('click', '#btnDeleteItem', function() {
+            $('#modalItemDelete').show();
+            let rowId = $(this).attr('row.id');
+            $('#itemRowId').val(rowId);
+        });
+
+        $(document).on('click', '#btnDeleteItemFinal', function() {
+
+            let datastring = 'rowId=' + $('#itemRowId').val()  + '&btnDeleteItemFinal=' + 'true';
+
+            $.ajax({
+
+                type: 'POST',
+                url: 'includes/item-table.inc.php',
+                data: datastring,
+                dataType: 'json',
+                success: function(data, textStatus) {
+
+                    if (data.status === true) {
+                        $('#modalItemDeleteInfo').text(data.message);
+                        $('#btnDeleteItemFinal').css('display', 'none');
+                        $('#btnItemCancel').css('display', 'none');
+
+
+                    } else {
+                        $('#modalItemDeleteInfo').text(data.message);
+                        $('#btnDeleteItemFinal').css('display', 'none');
+                        $('#btnItemCancel').css('display', 'none');
+                    }
+
+
+                },
+                fail: function(xhr, textStatus, errorThrown, data) {
+                    alert(errorThrown);
+                    alert(xhr);
+                    alert(textStatus);
+                }
+
+            });
         });
 
     });

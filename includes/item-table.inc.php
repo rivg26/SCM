@@ -97,4 +97,23 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
        
     }
 
+
+    if(isset($_POST['btnDeleteItemFinal'])){
+        $Id = $_POST['rowId'];
+
+        if(checkingItemDelete($Conn,$Id)){
+            echo json_encode([
+                'status' => false,
+                'message' => "You cannot delete this Item..."
+            ]);
+        }
+        else{
+            deleteItembound($Conn, $Id);
+            echo json_encode([
+                'status' => true,
+                'message' => "Delete Success"
+            ]);
+        }
+    }
+
 }
