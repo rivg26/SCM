@@ -94,14 +94,15 @@ if (!isset($_SESSION['username'])) {
             "bInfo": false,
             "bAutoWidth": true,
             lengthMenu: [5, 10, 20, 500, 100, 150],
-            // "columns": [
-            // { "data": "No" },
-            // { "data": "ItemName" },
-            // { "data": "Inbound" },
-            // { "data": "Outbound" },
-            // { "data": "start_date" },
-            // { "data": "salary" }
-            // ]
+            "columnDefs": [{
+                    targets: [2,3,4,5,6],
+                    className: "text-end"
+                },
+                {
+                    targets: [0,1],
+                    className: "text-justify"
+                }
+            ]
         });
         $(document).on('click', '#btnInventorySubmit', function() {
             let info = ['#fromDate', '#endDate'];

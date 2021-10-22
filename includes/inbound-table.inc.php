@@ -4,12 +4,26 @@
 if($_SERVER['REQUEST_METHOD'] == "POST"){
     require_once 'dbh.inc.php';
     require_once 'functions.inc.php';
-    if(isset($_POST['btnAddInbound'])){
-        $data = GenerateKey($Conn);
-        echo json_encode([
-            'status' => true,
-            'genKey' => $data
-        ]);
+    if(isset($_POST['inboundInvoiceChange'])){
+
+        $InvoiceNumber = trim($_POST['inboundInvoiceChange']);
+
+        if(empty($InvoiceNumber)){
+            echo json_encode([
+                'status' => false,
+                
+            ]);
+        }
+        elseif(checkInboundInvoice($Conn, $InvoiceNumber)){
+            echo json_encode([
+                'status' => false
+            ]);
+        }else{
+            echo json_encode([
+                'status' => true
+            ]);
+        }
+        
     }
 
     if(isset($_POST['btnSaveInbound'])){
@@ -22,6 +36,11 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
         $InboundRemarks = trim($_POST['inboundRemarks']);
 
         if(empty($InboundInvoice) ||empty($InboundItemName)  || empty($InboundQuantity) || empty($InboundItemCost) || empty($InboundDate) || empty($InboundEncoderId) ){
+            echo json_encode([
+                'status' => false
+            ]);
+        }
+        elseif(checkInboundInvoice($Conn, $InboundInvoice)){
             echo json_encode([
                 'status' => false
             ]);

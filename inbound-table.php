@@ -77,9 +77,10 @@ if (!isset($_SESSION['username'])) {
                 <div class="modal-body">
                     <div class="mb-2">
                         <label for="inboundInvoice" class="form-label">Invoice Number</label>
-                        <input type="text" class="form-control" id="inboundInvoice" placeholder="Invoice Number" readonly>
+                        <input type="text" class="form-control" id="inboundInvoice" placeholder="Invoice Number">
                         <input type="hidden" id="inboundRowId">
                         <input type="hidden" id="inboundRowItemId">
+                        <div class="invalid-feedback" id="inboundInvoiceFeedback">Please Input Invoice Number</div>
                     </div>
                     <div class="mb-2">
                         <label for="inboundItemName" class="form-label">Item Name</label>
@@ -161,35 +162,81 @@ if (!isset($_SESSION['username'])) {
             "bInfo": false,
             "bAutoWidth": true,
             lengthMenu: [5, 10, 20, 500, 100, 150],
-            "columnDefs": [
-                { targets:[3,4], className: "text-end" } , 
-                { targets:[0,1,2,6] , className: "text-justify"}, 
-                { targets:[5] , className: "text-center"} 
+            "columnDefs": [{
+                    targets: [3, 4],
+                    className: "text-end"
+                },
+                {
+                    targets: [0, 1, 2, 6],
+                    className: "text-justify"
+                },
+                {
+                    targets: [5],
+                    className: "text-center"
+                }
             ]
         });
-        $(document).on('click', '#btnAddInbound', function() {
 
-            let datastring = 'btnAddInbound=' + 'true';
-            $.ajax({
+        $(document).on('keyup', '#inboundInvoice', function() {
+            if (!$(this).val()) {
+                // $(this).removeClass('is-valid');
+                $(this).addClass('is-invalid');
+                $('#inboundInvoiceFeedback').text('Please Fill the fields...');
+            } else {
 
-                type: 'POST',
-                url: 'includes/inbound-table.inc.php',
-                data: datastring,
-                dataType: 'json',
-                success: function(data, textStatus) {
-                    if (data.status) {
-                        $('#modalInbound').show();
-                        $('#inboundInvoice').val(data.genKey);
+                let datastring = 'inboundInvoiceChange=' + $('#inboundInvoice').val();
+                $.ajax({
+
+                    type: 'POST',
+                    url: 'includes/inbound-table.inc.php',
+                    data: datastring,
+                    dataType: 'json',
+                    success: function(data, textStatus) {
+                        if (data.status) {
+                            $('#inboundInvoice').addClass('is-valid');
+                            $('#inboundInvoice').removeClass('is-invalid');
+                        } else {
+                            $('#inboundInvoice').addClass('is-invalid');
+                            $('#inboundInvoice').removeClass('is-valid');
+                            $('#inboundInvoiceFeedback').text('Invoice Number Exist Already!...');
+                        }
+
+                    },
+                    fail: function(xhr, textStatus, errorThrown, data) {
+                        alert(errorThrown);
+                        alert(xhr);
+                        alert(textStatus);
                     }
 
-                },
-                fail: function(xhr, textStatus, errorThrown, data) {
-                    alert(errorThrown);
-                    alert(xhr);
-                    alert(textStatus);
-                }
+                });
+            }
 
-            });
+
+
+        });
+        $(document).on('click', '#btnAddInbound', function() {
+            $('#modalInbound').show();
+            // let datastring = 'btnAddInbound=' + 'true';
+            // $.ajax({
+
+            //     type: 'POST',
+            //     url: 'includes/inbound-table.inc.php',
+            //     data: datastring,
+            //     dataType: 'json',
+            //     success: function(data, textStatus) {
+            //         if (data.status) {
+
+            //             $('#inboundInvoice').val(data.genKey);
+            //         }
+
+            //     },
+            //     fail: function(xhr, textStatus, errorThrown, data) {
+            //         alert(errorThrown);
+            //         alert(xhr);
+            //         alert(textStatus);
+            //     }
+
+            // });
 
         });
         $(document).on('click', '.btnModalInboundClose', function() {
@@ -236,9 +283,9 @@ if (!isset($_SESSION['username'])) {
         });
         $(document).on('click', '#btnSaveInbound', function() {
 
-            let allId = ['#inboundItemName', '#inboundQuantity', '#inboundItemCost', '#inboundDate'];
+            let allId = ['#inboundInvoice','#inboundItemName', '#inboundQuantity', '#inboundItemCost', '#inboundDate'];
             var checker;
-            for (let x = 0; x < 4; x++) {
+            for (let x = 0; x < 5; x++) {
 
                 if (!$(allId[x]).val()) {
                     $(allId[x]).addClass('is-invalid');
@@ -304,6 +351,7 @@ if (!isset($_SESSION['username'])) {
             $('#btnSaveInbound').attr('id', 'btnUpdateInbound');
             $('#btnUpdateInbound').text('Update Inbound');
             $('#modalInbound').show();
+            $('#inboundInvoice').attr('readonly', true);
 
             let datastring = 'inboundRowId=' + rowId + '&btnEditInbound=' + 'true';
             $.ajax({

@@ -1,8 +1,8 @@
 <?php
-    session_start();
-    if(!isset($_SESSION['username'])){
-        header('location: loginpage.php');
-    }
+session_start();
+if (!isset($_SESSION['username'])) {
+    header('location: loginpage.php');
+}
 ?>
 
 <!DOCTYPE html>
@@ -16,12 +16,13 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="css/mainpage.css">
+    <link rel="icon" href="img/favicon.ico">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
     <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
-    <title>Document</title>
+    <title>SCM Home Furnishing</title>
 </head>
 
 <body>
@@ -35,7 +36,7 @@
                     <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
                         <li class="nav-item">
                             <a href="" class="nav-link align-middle px-0 navSettings" link="home">
-                                <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Home</span>
+                                <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline navSettings">Home</span>
                             </a>
                         </li>
                         <li>
@@ -63,24 +64,26 @@
                     <div class="dropdown pb-4">
                         <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
                             <img src="https://github.com/mdo.png" alt="hugenerd" width="30" height="30" class="rounded-circle">
-                            <span class="d-none d-sm-inline mx-1" id="encoderId">Rig</span>
+                            <span class="d-none d-sm-inline mx-1" id="encoderId"><?php echo $_SESSION['first_name'] ?></span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
 
                             <!-- <li>
                                 <hr class="dropdown-divider">
                             </li> -->
-                            <li><a class="dropdown-item" href="#">Sign out</a></li>
+                            <li><a class="dropdown-item" href="includes/logout.inc.php">Sign out</a></li>
                         </ul>
                     </div>
                 </div>
             </div>
-        
+
             <div class="col py-3" id='backgroundWrapper'>
                 <button type="button" class="btn" id="btnToggle"><i class="fas fa-bars" id="toggleIcon"></i></button>
                 <br>
                 <div class="container-fluid mt-5" id="contentContainer">
-
+                    <div class="text-center">
+                        <img src="img/banner.png" class="img-fluid " alt="">
+                    </div>
                 </div>
                 <div class="shapes-3 loaderImg"></div>
             </div>
@@ -93,43 +96,43 @@
     $(document).ready(function() {
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
-        
+
         if (urlParams) {
-            switch (urlParams.get('component')){
-                case 'Product': 
+            switch (urlParams.get('component')) {
+                case 'Product':
                     var getComponent = 'product-table.php';
                     break;
-                case 'Item': 
+                case 'Item':
                     var getComponent = 'item-table.php';
                     break;
-                case 'Inbound': 
+                case 'Inbound':
                     var getComponent = 'inbound-table.php';
                     break;
-                case 'Outbound': 
+                case 'Outbound':
                     var getComponent = 'outbound-table.php';
                     break;
-                case 'Inventory': 
+                case 'Inventory':
                     var getComponent = 'inventory-table.php';
                     break;
                 default:
                     var getComponent = false;
             }
-            if(getComponent){
+            if (getComponent) {
 
                 $('#contentContainer').load(getComponent, function() {
                     $('.loaderImg').fadeOut(function() {
                         $('.shapes-3').css('display', 'none');
-                        
+
                     });
                 });
-                
+
             }
         }
         $('#btnToggle').click(function() {
             $('.sideBar').slideToggle("fast", 'linear');
         });
 
-        
+
         $(document).on('click', '.navSettings', function() {
             history.pushState(null, "", location.href.split("?")[0]);
             $('.loaderImg').fadeIn(function() {
@@ -160,6 +163,7 @@
                     default:
                         var component = false;
                 }
+                
                 if (component) {
                     $('#contentContainer').load(component, function() {
                         $('.loaderImg').fadeOut(function() {
@@ -169,7 +173,7 @@
                     });
                 } else {
                     $('.loaderImg').hide();
-                    alert(link + ' not found!');
+                    window.location.href = "mainpage.php";
                 }
             }, 1000);
             return false;

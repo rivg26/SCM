@@ -198,7 +198,20 @@ if (!isset($_SESSION['username'])) {
             "bFilter": true,
             "bInfo": false,
             "bAutoWidth": true,
-            lengthMenu: [5, 10, 20, 500, 100, 150]
+            lengthMenu: [5, 10, 20, 500, 100, 150],
+            "columnDefs": [{
+                    targets: [3],
+                    className: "text-end"
+                },
+                {
+                    targets: [0, 1, 2, 5],
+                    className: "text-justify"
+                },
+                {
+                    targets: [4],
+                    className: "text-center"
+                }
+            ]
         });
 
         $(document).on('click', '#btnAddOutbound', function() {
@@ -249,7 +262,7 @@ if (!isset($_SESSION['username'])) {
         });
 
         $(document).on('click', '#btnSaveOutbound', function() {
-
+            $('#outboundTotalError p').text('There is an error that needs to be fix..');
             let allId = ['#outboundItemName', '#outboundProductName', '#outboundQuantity', '#outboundDate'];
             var checker;
             for (let x = 0; x < 4; x++) {
@@ -279,6 +292,8 @@ if (!isset($_SESSION['username'])) {
                     dataType: 'json',
                     success: function(data, textStatus) {
 
+
+
                         if (data.status === true) {
 
                             $('#btnSaveOutbound').text('Saved');
@@ -287,14 +302,34 @@ if (!isset($_SESSION['username'])) {
                             $('input').attr('disabled', true);
                             $('select').attr('disabled', true);
                             $('textarea').attr('disabled', true);
-                            // alert('success');
+
 
                         } else {
-                            // alert(data.status);
-                            $('#loading').remove();
-                            $('#btnSaveOutbound').removeAttr('disabled');
-                            $('#btnSaveOutbound').text('Save Outbound');
-                            $('#outboundTotalError').css('display', 'block');
+
+                            if (data.errorStatus === 'emptyNull') {
+
+                                $('#loading').remove();
+                                $('#btnSaveOutbound').removeAttr('disabled');
+                                $('#btnSaveOutbound').text('Save Outbound');
+                                $('#outboundTotalError').css('display', 'block');
+                                $('#outboundTotalError p').text('You Cannot Outbound this item...Zero Inbound');
+
+                            } else if (data.errorStatus === 'over') {
+
+                                $('#loading').remove();
+                                $('#btnSaveOutbound').removeAttr('disabled');
+                                $('#btnSaveOutbound').text('Save Outbound');
+                                $('#outboundTotalError').css('display', 'block');
+                                $('#outboundTotalError p').text('You Cannot Outbound this item...Outbound Quantity is greater than Inbound quantity');
+
+                            } else {
+
+                                $('#loading').remove();
+                                $('#btnSaveOutbound').removeAttr('disabled');
+                                $('#btnSaveOutbound').text('Save Outbound');
+                                $('#outboundTotalError').css('display', 'block');
+
+                            }
                         }
 
 
@@ -351,6 +386,7 @@ if (!isset($_SESSION['username'])) {
         });
 
         $(document).on('click', '#btnUpdateOutbound', function() {
+            $('#outboundTotalError p').text('There is an error that needs to be fix..');
             let allId = ['#outboundItemName', '#outboundProductName', '#outboundQuantity', '#outboundDate'];
             var checker;
             for (let x = 0; x < 4; x++) {
@@ -392,10 +428,31 @@ if (!isset($_SESSION['username'])) {
 
                         } else {
                             // alert(data.status);
-                            $('#loading').remove();
-                            $('#btnUpdateOutbound').removeAttr('disabled');
-                            $('#btnUpdateOutbound').text('Update Outbound');
-                            $('#outboundTotalError').css('display', 'block');
+
+                            if (data.errorStatus === 'emptyNull') {
+
+                                $('#loading').remove();
+                                $('#btnUpdateOutbound').removeAttr('disabled');
+                                $('#btnUpdateOutbound').text('Update Outbound');
+                                $('#outboundTotalError').css('display', 'block');
+                                $('#outboundTotalError p').text('You Cannot Outbound this item...Zero Inbound');
+
+                            } else if (data.errorStatus === 'over') {
+
+                                $('#loading').remove();
+                                $('#btnUpdateOutbound').removeAttr('disabled');
+                                $('#btnUpdateOutbound').text('Update Outbound');
+                                $('#outboundTotalError').css('display', 'block');
+                                $('#outboundTotalError p').text('You Cannot Outbound this item...Outbound Quantity is greater than Inbound quantity');
+
+                            } else {
+
+                                $('#loading').remove();
+                                $('#btnUpdateOutbound').removeAttr('disabled');
+                                $('#btnUpdateOutbound').text('Update Outbound');
+                                $('#outboundTotalError').css('display', 'block');
+
+                            }
                         }
 
 

@@ -165,7 +165,20 @@ require_once 'includes/functions.inc.php';
             "bFilter": true,
             "bInfo": false,
             "bAutoWidth": true,
-            lengthMenu: [5, 10, 20, 500, 100, 150]
+            lengthMenu: [5, 10, 20, 500, 100, 150],
+            "columnDefs": [{
+                    targets: [4],
+                    className: "text-end"
+                },
+                {
+                    targets: [0,1],
+                    className: "text-justify"
+                },
+                {
+                    targets: [3, 2 , 5],
+                    className: "text-center"
+                }
+            ]
         });
 
         $('#btnAddProduct').click(function() {

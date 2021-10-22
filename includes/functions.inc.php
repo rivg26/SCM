@@ -252,6 +252,19 @@ function deleteItembound($Conn, $Id)
 }
 
 //INNERBOUND FUNCTIONS
+function checkInboundInvoice($Conn, $InvoiceNumber)
+{
+    $Sql = "SELECT invoice_number FROM inbound_table WHERE invoice_number = '$InvoiceNumber' ";
+    $ResultData = mysqli_query($Conn, $Sql);
+    if ($Row = mysqli_fetch_assoc($ResultData)) {
+        return $Row;
+    }
+    else{
+        return false;
+    }
+
+   
+}
 function CheckKeys($Conn,$RandStr)
 {
 
@@ -459,6 +472,19 @@ function deleteOutbound($Conn, $Id)
     mysqli_query($Conn, $Sql);
     mysqli_close($Conn);
 }
+
+function getInboundQuantityInOutbound($Conn,$ItemId)
+{
+    $Sql = "SELECT item_id, SUM(inbound_table.inbound_quantity) AS total_inbound_quantity FROM item_table JOIN inbound_table ON inbound_table.inbound_item_id = item_id WHERE item_id = '$ItemId';";
+    $ResultData = mysqli_query($Conn, $Sql);
+    if ($Row = mysqli_fetch_assoc($ResultData)) {
+        return $Row;
+    }
+    else{
+        return false;
+    }
+}
+
 
 function getInventoryTable($Conn,$FromDate,$EndDate)
 {
