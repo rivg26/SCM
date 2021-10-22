@@ -160,7 +160,12 @@ if (!isset($_SESSION['username'])) {
             "bFilter": true,
             "bInfo": false,
             "bAutoWidth": true,
-            lengthMenu: [5, 10, 20, 500, 100, 150]
+            lengthMenu: [5, 10, 20, 500, 100, 150],
+            "columnDefs": [
+                { targets:[3,4], className: "text-end" } , 
+                { targets:[0,1,2,6] , className: "text-justify"}, 
+                { targets:[5] , className: "text-center"} 
+            ]
         });
         $(document).on('click', '#btnAddInbound', function() {
 

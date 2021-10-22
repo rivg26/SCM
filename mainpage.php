@@ -115,12 +115,14 @@
                     var getComponent = false;
             }
             if(getComponent){
+
                 $('#contentContainer').load(getComponent, function() {
                     $('.loaderImg').fadeOut(function() {
                         $('.shapes-3').css('display', 'none');
                         
                     });
                 });
+                
             }
         }
         $('#btnToggle').click(function() {
