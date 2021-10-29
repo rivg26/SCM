@@ -489,7 +489,7 @@ function getInboundQuantityInOutbound($Conn,$ItemId)
 function getInventoryTable($Conn,$FromDate,$EndDate)
 {
     
-    $Sql = "SELECT item_name,SUM(inbound_table.inbound_quantity) AS total_inbound, SUM(outbound_table.outbound_quantity) AS total_outbound, inbound_table.inbound_item_cost FROM `item_table` JOIN inbound_table ON inbound_table.inbound_item_id = item_id JOIN outbound_table ON outbound_table.outbound_item_id = item_id WHERE (inbound_table.inbound_date BETWEEN '$FromDate' AND '$EndDate') AND (outbound_table.outbound_date BETWEEN '$FromDate' AND '$EndDate') GROUP By item_id;";
+    $Sql = "SELECT item_name,SUM(inbound_table.inbound_quantity) AS total_inbound, SUM(outbound_table.outbound_quantity) AS total_outbound,  SUM((inbound_table.inbound_item_cost * inbound_table.inbound_quantity)) / SUM(inbound_table.inbound_quantity) AS total_cost FROM `item_table` JOIN inbound_table ON inbound_table.inbound_item_id = item_id JOIN outbound_table ON outbound_table.outbound_item_id = item_id WHERE (inbound_table.inbound_date BETWEEN '$FromDate' AND '$EndDate') AND (outbound_table.outbound_date BETWEEN '$FromDate' AND '$EndDate') GROUP By item_id;";
      
     // $Sql2 = "SELECT item_name,SUM(inbound_table.inbound_quantity), SUM(outbound_table.outbound_quantity) FROM `item_table` JOIN inbound_table ON inbound_table.inbound_item_id = item_id JOIN outbound_table ON outbound_table.outbound_item_id = item_id WHERE (inbound_table.inbound_date BETWEEN '2021-10-08' AND '2021-10-13') AND (outbound_table.outbound_date BETWEEN '2021-10-08' AND '2021-10-13') GROUP By item_id;";
       
@@ -503,7 +503,7 @@ function getInventoryTable($Conn,$FromDate,$EndDate)
         <td>' . $Row['total_inbound']. '</td>
         <td>' . $Row['total_outbound'] . '</td>
         <td>' . $TotalRemainingQuantity . '</td>
-        <td>' . $Row['inbound_item_cost'] .'</td>
+        <td>' . $Row['total_cost'] .'</td>
         <td>' . $TotalRemainingQuantity * (float) $Row['inbound_item_cost'] .'</td>
         
     </tr>';

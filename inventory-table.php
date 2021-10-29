@@ -30,7 +30,7 @@ if (!isset($_SESSION['username'])) {
             <div class="ms-3">
                 <em>Please Select Date...</em>
                 <div class="row mt-3">
-                    <div class="col-md-6 col-sm-12 ">
+                    <div class="col-md-7 col-sm-12 col-xs-12">
                         <div class="mb-3 row">
                             <label for="fromDate" class="col-sm-1 col-form-label">From</label>
                             <div class="col-sm-4">
@@ -48,7 +48,7 @@ if (!isset($_SESSION['username'])) {
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6 col-sm-12 statusIcons">
+                    <div class="col-md-4 col-sm-12 statusIcons">
                         <p class="headerIcon"><i class="fas fa-warehouse" style="margin-right:7px"></i>Total Warehouse Value</p>
                         <p class="footerIcon" id='totalWarehouseValue'></p>
                     </div>
@@ -134,9 +134,9 @@ if (!isset($_SESSION['username'])) {
                         var totalWarehouseValue = 0;
                         for (let x = 0; x < data.length; x++) {
                             let totalQuantity = data[x]['total_inbound'] - data[x]['total_outbound'];
-                            let totalItemCost = totalQuantity * data[x]['inbound_item_cost'];
+                            let totalItemCost = totalQuantity * Math.round(data[x]['total_cost'] * 100)/100 ;
                             totalWarehouseValue += totalItemCost;
-                            var rowData = '<tr><td>' + y++ + '</td><td>' + data[x]['item_name'] + '</td> <td>' + data[x]['total_inbound'] + '</td><td>' + data[x]['total_outbound'] + '</td><td>' + totalQuantity + '</td><td>' + data[x]['inbound_item_cost'] + '</td><td>' + totalItemCost + '</td></tr>';
+                            var rowData = '<tr><td>' + y++ + '</td><td>' + data[x]['item_name'] + '</td> <td>' + data[x]['total_inbound'] + '</td><td>' + data[x]['total_outbound'] + '</td><td>' + totalQuantity + '</td><td>' + Math.round(data[x]['total_cost'] * 100)/100 + '</td><td>' + totalItemCost + '</td></tr>';
 
                             arrayRow.push(rowData);
                         }
